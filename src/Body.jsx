@@ -1,7 +1,8 @@
 const Body = ()  => {
   return (
-    <div>Body</div>
+    <div>  <Navbar /></div>
     )
 }
 export default Body
+
 
