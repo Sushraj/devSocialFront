@@ -9,16 +9,8 @@ function App() {
   return (
     <>
     <BrowserRouter  basename="/">
-        <Route path="/"  element= {<div>Base Page</div>}></Route>
-
-    <Route path="/login"  element= {<div>Login Page</div>}></Route>
-    <Route path="/test"  element= {<div>test Page</div>}></Route>
-
+        <Route path="/"  element= {<Body></Body>}Route>
     </BrowserRouter>
-    <Navbar />
-      <h1 class="text-3xl font-bold underline">
-         Hello world!
-      </h1>
     </>
   )
 }
