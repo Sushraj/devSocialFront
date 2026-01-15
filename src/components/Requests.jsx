@@ -27,37 +27,84 @@ const Requests = () => {
   if (requests.length === 0) return <h1>No Request Found</h1>;
 
   return (
-    <div>
-      <div className="text-center  my-10 ">
-        <h1 className="text-3xl font-bold">Connection Request</h1>
+    <div className="min-h-screen w-full flex flex-col items-center px-4 py-10">
+      <h1 className="text-3xl font-bold mb-8">Connection Requests</h1>
+
+      <div className="w-full max-w-2xl space-y-8">
         {requests.map((request) => {
+          if (!request?._id) return null;
+
           const { firstName, lastName, photoUrl, age, gender, about } =
-            request?.fromUserId;
-          if (!request._id) return null;
+            request?.fromUserId || {};
 
           return (
             <div
-              className="m-4 p-4 rounded-lg shadow-md bg-base-300 flex flex-col items-center gap-2"
               key={request._id}
+              className="relative mx-auto w-full max-w-md overflow-hidden rounded-3xl bg-base-200 shadow-2xl"
             >
-              <div>
-                {" "}
+              {/* Photo */}
+              <div className="relative h-[420px] w-full">
                 <img
                   src={photoUrl}
-                  className="w-20 h-20 rounded-full"
-                  alt="user photo"
+                  alt={`${firstName || "User"} photo`}
+                  className="h-full w-full object-cover"
                 />
+
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                {/* Top badge */}
+                <div className="absolute top-4 left-4">
+                  <span className="badge badge-secondary badge-lg">
+                    New Request
+                  </span>
+                </div>
+
+                {/* Bottom text */}
+                <div className="absolute bottom-5 left-5 right-5 text-white">
+                  <div className="flex items-end justify-between gap-3">
+                    <h2 className="text-2xl font-bold leading-tight">
+                      {firstName} {lastName}
+                      {age ? (
+                        <span className="font-semibold">, {age}</span>
+                      ) : null}
+                    </h2>
+                    {gender ? (
+                      <span className="badge badge-outline text-white border-white/60">
+                        {gender}
+                      </span>
+                    ) : null}
+                  </div>
+
+                  {about ? (
+                    <p className="mt-2 text-sm text-white/90 line-clamp-3">
+                      {about}
+                    </p>
+                  ) : (
+                    <p className="mt-2 text-sm text-white/70 italic">
+                      No bio added yet.
+                    </p>
+                  )}
+                </div>
               </div>
-              <div>
-                <h2 className="text-xl font-semibold">
-                  {firstName} {lastName}, {age}
-                </h2>
-                <p className="italic">{gender}</p>
-                <p>{about}</p>
-              </div>
-              <div className="flex gap-4">
-                <button className="btn btn-primary">Reject</button>
-                <button className="btn btn-secondary">Accept</button>
+
+              {/* Actions */}
+              <div className="flex items-center justify-center gap-6 py-6">
+                <button
+                  className="btn btn-circle btn-lg bg-base-300 border-0 hover:scale-105 transition"
+                  // onClick={() => handleReject(request._id)}
+                  title="Reject"
+                >
+                  ✕
+                </button>
+
+                <button
+                  className="btn btn-circle btn-lg bg-pink-500 text-white border-0 hover:bg-pink-600 hover:scale-105 transition"
+                  // onClick={() => handleAccept(request._id)}
+                  title="Accept"
+                >
+                  ❤
+                </button>
               </div>
             </div>
           );
