@@ -2,21 +2,22 @@ import axios from "axios";
 import React, { use, useEffect } from "react";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { addRequest } from "../utils/request";
+import { addRequest, removeRequest } from "../utils/request";
 
 const Requests = () => {
   const requests = useSelector((store) => store.requests);
   const dispatch = useDispatch();
 
-  const reviewedRequest = async (status, requestId) => {
+  const reviewedRequest = async (status, _id) => {
     try {
-      const res = await axios.post(
-        BASE_URL + "/request/review/" + status + "/" + requestId,
+      const res = axios.post(
+        BASE_URL + "/request/review/" + status + "/" + _id,
+        {},
         {
           withCredentials: true,
         }
       );
-      dispatch(addRequest(res?.data?.data));
+      dispatch(removeRequest(_id));
       // Handle the response data as needed
     } catch (err) {
       console.error(err);
@@ -40,7 +41,12 @@ const Requests = () => {
   }, []);
 
   if (!requests) return;
-  if (requests.length === 0) return <h1>No Request Found</h1>;
+  if (requests.length === 0)
+    return (
+      <h1 className="text-3xl font-bold flex justify-center items-center mt-10">
+        No Request Found
+      </h1>
+    );
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center px-4 py-10">
@@ -111,7 +117,7 @@ const Requests = () => {
                 <button
                   className="btn btn-circle btn-lg bg-base-300 border-0 hover:scale-105 transition"
                   title="Reject"
-                  onClick={() => reviewedRequest("rejected", _id)}
+                  onClick={() => reviewedRequest("rejected", request._id)}
                 >
                   ✕
                 </button>
@@ -119,7 +125,7 @@ const Requests = () => {
                 <button
                   className="btn btn-circle btn-lg bg-pink-500 text-white border-0 hover:bg-pink-600 hover:scale-105 transition"
                   title="Accept"
-                  onClick={() => reviewedRequest("accepted", _id)}
+                  onClick={() => reviewedRequest("accepted", request._id)}
                 >
                   ❤
                 </button>
