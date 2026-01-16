@@ -7,6 +7,22 @@ import { addRequest } from "../utils/request";
 const Requests = () => {
   const requests = useSelector((store) => store.requests);
   const dispatch = useDispatch();
+
+  const reviewedRequest = async (status, requestId) => {
+    try {
+      const res = await axios.post(
+        BASE_URL + "/request/review/" + status + "/" + requestId,
+        {
+          withCredentials: true,
+        }
+      );
+      dispatch(addRequest(res?.data?.data));
+      // Handle the response data as needed
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const fetchRequests = async () => {
     try {
       const res = await axios.get(BASE_URL + "/user/requests/received", {
@@ -32,9 +48,11 @@ const Requests = () => {
 
       <div className="w-full max-w-2xl space-y-8">
         {requests.map((request) => {
+          console.log("request ----->", request);
+
           if (!request?._id) return null;
 
-          const { firstName, lastName, photoUrl, age, gender, about } =
+          const { firstName, lastName, photoUrl, age, gender, about, _id } =
             request?.fromUserId || {};
 
           return (
@@ -89,19 +107,19 @@ const Requests = () => {
               </div>
 
               {/* Actions */}
-              <div className="flex items-center justify-center gap-6 py-6">
+              <div className="flex items-center justify-center gap-6 py-6 mb-4 ">
                 <button
                   className="btn btn-circle btn-lg bg-base-300 border-0 hover:scale-105 transition"
-                  // onClick={() => handleReject(request._id)}
                   title="Reject"
+                  onClick={() => reviewedRequest("rejected", _id)}
                 >
                   ✕
                 </button>
 
                 <button
                   className="btn btn-circle btn-lg bg-pink-500 text-white border-0 hover:bg-pink-600 hover:scale-105 transition"
-                  // onClick={() => handleAccept(request._id)}
                   title="Accept"
+                  onClick={() => reviewedRequest("accepted", _id)}
                 >
                   ❤
                 </button>
