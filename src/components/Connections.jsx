@@ -3,6 +3,7 @@ import React, { use, useEffect } from "react";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnection } from "../utils/connectionSlice";
+import { Link } from "react-router-dom";
 
 const Connections = () => {
   const connections = useSelector((store) => store.connections);
@@ -89,9 +90,11 @@ const Connections = () => {
               <div className="p-4 flex justify-between items-center">
                 <button className="btn btn-sm btn-ghost">View Profile</button>
 
-                <button className="btn btn-sm bg-pink-500 text-white border-0 hover:bg-pink-600">
-                  Message
-                </button>
+                <Link to={`/chat/${connection._id}`}>
+                  <button className="btn btn-sm bg-pink-500 text-white border-0 hover:bg-pink-600">
+                    Chat Now
+                  </button>
+                </Link>
               </div>
             </div>
           );

@@ -1,15 +1,97 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 const Chat = () => {
+  const { targetUserId } = useParams().targetUserId;
+  const [messages, setMessages] = useState([{ text: "Hello there!" }]);
 
-    const {targetUserId} = useParams().targetUserId;
-    console.log(targetUserId);
-    
+  console.log(targetUserId);
+
   return (
-    <div>
-        
-    </div>
-  )
-}
+    <div className="min-h-screen bg-base-100 flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md rounded-3xl bg-base-200 shadow-2xl overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-base-300">
+          <div className="flex items-center gap-3">
+            {/* Avatar placeholder (replace with target photo if you have) */}
+            <div className="avatar">
+              <div className="w-10 h-10 rounded-full bg-base-300" />
+            </div>
 
-export default Chat
+            <div className="leading-tight">
+              <h1 className="font-bold text-base">Chat</h1>
+              <p className="text-xs opacity-70">with {targetUserId}</p>
+            </div>
+          </div>
+
+          <button className="btn btn-sm btn-ghost">⋯</button>
+        </div>
+
+        {/* Messages */}
+        <div className="h-[70vh] overflow-y-auto px-4 py-4 space-y-3">
+          {messages.map((msg, index) => {
+            return (
+              <div className="chat chat-start">
+                <div className="chat-image avatar">
+                  <div className="w-10 rounded-full">
+                    <img
+                      alt="Tailwind CSS chat bubble component"
+                      src="https://img.daisyui.com/images/profile/demo/kenobee@192.webp"
+                    />
+                  </div>
+                </div>
+                <div className="chat-header">
+                  Obi-Wan Kenobi
+                  <time className="text-xs opacity-50">12:45</time>
+                </div>
+                <div className="chat-bubble">You were the Chosen One!</div>
+                <div className="chat-footer opacity-50">Delivered</div>
+              </div>
+            );
+          })}
+
+          {/* Outgoing message example */}
+          <div className="flex justify-end">
+            {/* <div className="max-w-[75%] rounded-2xl rounded-br-md bg-pink-500 text-white px-4 py-2 text-sm">
+              Hi! How’s it going?
+            </div> */}
+          </div>
+
+          {/* Add your mapped messages here */}
+        </div>
+
+        {/* Input */}
+        <div className="px-4 py-3 border-t border-base-300">
+          <div className="flex items-center gap-2">
+            <button
+              className="btn btn-circle btn-sm bg-base-300 border-0"
+              title="Add"
+            >
+              +
+            </button>
+
+            <input
+              className="input input-bordered w-full rounded-full"
+              placeholder="Type a message..."
+            />
+
+            <button
+              className="btn btn-circle btn-sm bg-pink-500 text-white border-0 hover:bg-pink-600"
+              title="Send"
+            >
+              ➤
+            </button>
+          </div>
+
+          {/* Bottom actions (optional) */}
+          <div className="mt-3 flex justify-between">
+            <button className="btn btn-sm btn-ghost">Logout</button>
+            <button className="btn btn-sm btn-ghost">Block</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Chat;
