@@ -1,11 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { createSocketConnection } from "../utils/socket";
+import { useSelector } from "react-redux";
 
 const Chat = () => {
   const { targetUserId } = useParams().targetUserId;
   const [messages, setMessages] = useState([{ text: "Hello there!" }]);
+  const user = useSelector((store) => store.user);
+  const userId = user?._id;
 
-  console.log(targetUserId);
+  useEffect(() => {
+    if (!userId) return;
+    const socket = createSocketConnection();
+    // as soon as page loaded, socket connection is established and joinchat event is emitted
+    socket.emit("joinChat", { userId, targetUserId });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [userId, targetUserId]);
 
   return (
     <div className="min-h-screen bg-base-100 flex items-center justify-center px-4 py-8">
@@ -31,7 +44,7 @@ const Chat = () => {
         <div className="h-[70vh] overflow-y-auto px-4 py-4 space-y-3">
           {messages.map((msg, index) => {
             return (
-              <div className="chat chat-start">
+              <div key={index} className="chat chat-start">
                 <div className="chat-image avatar">
                   <div className="w-10 rounded-full">
                     <img
