@@ -4,16 +4,18 @@ import { createSocketConnection } from "../utils/socket";
 import { useSelector } from "react-redux";
 
 const Chat = () => {
-  const { targetUserId } = useParams().targetUserId;
+  const { targetUserId } = useParams();
   const [messages, setMessages] = useState([{ text: "Hello there!" }]);
   const user = useSelector((store) => store.user);
   const userId = user?._id;
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      return;
+    }
     const socket = createSocketConnection();
     // as soon as page loaded, socket connection is established and joinchat event is emitted
-    socket.emit("joinChat", { userId, targetUserId });
+    socket.emit("joinChat", { firstName: user.firstName, Id, targetUserId });
 
     return () => {
       socket.disconnect();
@@ -49,15 +51,15 @@ const Chat = () => {
                   <div className="w-10 rounded-full">
                     <img
                       alt="Tailwind CSS chat bubble component"
-                      src="https://img.daisyui.com/images/profile/demo/kenobee@192.webp"
+                      src={user.photoUrl}
                     />
                   </div>
                 </div>
                 <div className="chat-header">
-                  Obi-Wan Kenobi
+                  {user?.firstName} {user?.lastName}
                   <time className="text-xs opacity-50">12:45</time>
                 </div>
-                <div className="chat-bubble">You were the Chosen One!</div>
+                <div className="chat-bubble">{msg?.text}</div>
                 <div className="chat-footer opacity-50">Delivered</div>
               </div>
             );
