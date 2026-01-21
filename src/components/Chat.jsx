@@ -5,9 +5,15 @@ import { useSelector } from "react-redux";
 
 const Chat = () => {
   const { targetUserId } = useParams();
-  const [messages, setMessages] = useState([{ text: "Hello there!" }]);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+
   const user = useSelector((store) => store.user);
-  const userId = user?._id;
+  const [firstName, lastName, userId] = [
+    user?.firstName,
+    user?.lastName,
+    user?._id,
+  ];
 
   useEffect(() => {
     if (!userId) {
@@ -15,12 +21,30 @@ const Chat = () => {
     }
     const socket = createSocketConnection();
     // as soon as page loaded, socket connection is established and joinchat event is emitted
-    socket.emit("joinChat", { firstName: user.firstName, Id, targetUserId });
+    socket.emit("joinChat", {
+      firstName: user.firstName,
+      userId,
+      targetUserId,
+    });
+
+    socket.on("messageReceived", ({ firstName, text }) => {
+      setMessages((messages) => [...messages, firstName, text]);
+    });
 
     return () => {
       socket.disconnect();
     };
   }, [userId, targetUserId]);
+
+  const sendMessage = (message) => {
+    const socket = createSocketConnection();
+    socket.emit("sendMessage", {
+      firstName,
+      userId,
+      targetUserId,
+      text: newMessage,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-base-100 flex items-center justify-center px-4 py-8">
@@ -51,12 +75,12 @@ const Chat = () => {
                   <div className="w-10 rounded-full">
                     <img
                       alt="Tailwind CSS chat bubble component"
-                      src={user.photoUrl}
+                      src={msg?.photoUrl}
                     />
                   </div>
                 </div>
                 <div className="chat-header">
-                  {user?.firstName} {user?.lastName}
+                  {msg?.firstName}
                   <time className="text-xs opacity-50">12:45</time>
                 </div>
                 <div className="chat-bubble">{msg?.text}</div>
@@ -86,13 +110,16 @@ const Chat = () => {
             </button>
 
             <input
+              value={newMessage}
               className="input input-bordered w-full rounded-full"
               placeholder="Type a message..."
+              onChange={(e) => setNewMessage(e.target.value)}
             />
 
             <button
               className="btn btn-circle btn-sm bg-pink-500 text-white border-0 hover:bg-pink-600"
               title="Send"
+              onClick={sendMessage}
             >
               ➤
             </button>
