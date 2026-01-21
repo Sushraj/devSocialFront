@@ -27,8 +27,8 @@ const Chat = () => {
       targetUserId,
     });
 
-    socket.on("messageReceived", ({ firstName, text }) => {
-      setMessages((messages) => [...messages, firstName, text]);
+    socket.on("messageReceived", ({ firstName, text, photoUrl }) => {
+      setMessages((messages) => [...messages, { firstName, text, photoUrl }]);
     });
 
     return () => {
@@ -39,11 +39,13 @@ const Chat = () => {
   const sendMessage = (message) => {
     const socket = createSocketConnection();
     socket.emit("sendMessage", {
-      firstName,
+      firstName: user.firstName,
       userId,
       targetUserId,
       text: newMessage,
+      photoUrl: user.photoUrl,
     });
+    setNewMessage("");
   };
 
   return (
@@ -69,19 +71,17 @@ const Chat = () => {
         {/* Messages */}
         <div className="h-[70vh] overflow-y-auto px-4 py-4 space-y-3">
           {messages.map((msg, index) => {
+            console.log("msg object:", msg);
             return (
               <div key={index} className="chat chat-start">
                 <div className="chat-image avatar">
                   <div className="w-10 rounded-full">
-                    <img
-                      alt="Tailwind CSS chat bubble component"
-                      src={msg?.photoUrl}
-                    />
+                    <img alt="avatar" src={msg?.photoUrl} />
                   </div>
                 </div>
                 <div className="chat-header">
                   {msg?.firstName}
-                  <time className="text-xs opacity-50">12:45</time>
+                  <time className="text-xs opacity-50">12:00</time>
                 </div>
                 <div className="chat-bubble">{msg?.text}</div>
                 <div className="chat-footer opacity-50">Delivered</div>
