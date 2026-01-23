@@ -23,6 +23,18 @@ const Chat = () => {
 
     console.log(chat.data.messages);
 
+    const chatMessages = chat?.data?.messages.map((msg) => {
+      const { senderId, text, photoUrl } = msg;
+      return {
+        firstName: senderId?.firstName,
+        lastName: senderId?.lastName,
+        text: msg.text,
+        photoUrl: senderId?.photoUrl,
+      };
+    });
+
+    setMessages(chatMessages);
+
     try {
     } catch (err) {
       console.error(err);
@@ -45,8 +57,11 @@ const Chat = () => {
       targetUserId,
     });
 
-    socket.on("messageReceived", ({ firstName, text, photoUrl }) => {
-      setMessages((messages) => [...messages, { firstName, text, photoUrl }]);
+    socket.on("messageReceived", ({ firstName, lastName, text, photoUrl }) => {
+      setMessages((messages) => [
+        ...messages,
+        { firstName, lastName, text, photoUrl },
+      ]);
     });
 
     return () => {
@@ -58,6 +73,7 @@ const Chat = () => {
     const socket = createSocketConnection();
     socket.emit("sendMessage", {
       firstName: user.firstName,
+      lastName: user.lastName,
       userId,
       targetUserId,
       text: newMessage,
@@ -98,7 +114,7 @@ const Chat = () => {
                   </div>
                 </div>
                 <div className="chat-header">
-                  {msg?.firstName}
+                  {`${msg?.firstName} ${msg?.lastName || ""}`}
                   <time className="text-xs opacity-50">12:00</time>
                 </div>
                 <div className="chat-bubble">{msg?.text}</div>
