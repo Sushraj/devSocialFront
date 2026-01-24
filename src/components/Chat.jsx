@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useLayoutEffect } from "react";
 import { useParams } from "react-router-dom";
 import { createSocketConnection } from "../utils/socket";
 import { useSelector } from "react-redux";
@@ -15,6 +15,27 @@ const Chat = () => {
     user?.lastName,
     user?._id,
   ];
+  const messagesEndRef = useRef(null);
+  const messagesBoxRef = useRef(null);
+
+  // Option A: scroll the container directly
+  const scrollToBottom = (smooth = true) => {
+    const el = messagesBoxRef.current;
+    if (!el) return;
+    el.scrollTo({
+      top: el.scrollHeight,
+      behavior: smooth ? "smooth" : "auto",
+    });
+  };
+
+  // When messages change, keep it at bottom (latest message visible)
+  useLayoutEffect(() => {
+    scrollToBottom(false); // auto on initial load
+  }, [targetUserId]); // when switching chats
+
+  useLayoutEffect(() => {
+    scrollToBottom(true); // smooth on new message
+  }, [messages]);
 
   const fetchChatMessages = async () => {
     const chat = await axios.get(BASE_URL + `/chat/${targetUserId}`, {
@@ -103,11 +124,20 @@ const Chat = () => {
         </div>
 
         {/* Messages */}
-        <div className="h-[70vh] overflow-y-auto px-4 py-4 space-y-3">
+        <div
+          ref={messagesBoxRef}
+          className="h-[70vh] overflow-y-auto px-4 py-4 space-y-3"
+        >
           {messages.map((msg, index) => {
             console.log("msg object:", msg);
             return (
-              <div key={index} className="chat chat-start">
+              <div
+                key={index}
+                className={
+                  "chat " +
+                  (msg.firstName === firstName ? "chat-end" : "chat-start")
+                }
+              >
                 <div className="chat-image avatar">
                   <div className="w-10 rounded-full">
                     <img alt="avatar" src={msg?.photoUrl} />
