@@ -15,7 +15,7 @@ const Requests = () => {
         {},
         {
           withCredentials: true,
-        }
+        },
       );
       dispatch(removeRequest(_id));
       // Handle the response data as needed

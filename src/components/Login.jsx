@@ -23,7 +23,7 @@ const Login = () => {
           emailId,
           password,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       dispatch(addUser(response.data));
       return navigate("/");
@@ -42,7 +42,7 @@ const Login = () => {
           emailId,
           password,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       dispatch(addUser(response.data.data));
       return navigate("/profile");
